@@ -13,10 +13,10 @@ The default setting uses std 17, but you can change it in `cmake/common.cmake`.
 ### CMake 3.29
 - CMake is the build tool used for this project.
 
-## Generator
+### Generator
 - (Optional) [Ninja](https://ninja-build.org/) can greatly improve the incremental build time.
 
-## 3rdParty
+### 3rdParty
 - none yet
 
 ## Usage
@@ -26,7 +26,7 @@ You need to modify those names in both the CMake files and the project structure
 ## Motivation 
 - The code base is avoiding overwhelming the developer by presenting very clear and self describing interfaces, whuch allows an easy project management; And reduces the occurence of errors 
 - The structure can be used as a base for different type and flavour of endproducts like SDKs, apps, services ect...
-## BArriers
+## Barriers
 - For sure the shortness of the different scripts gives an easiness in the build management, but the complexity of folder/files structure is a little bit confusing especially by browsing
 
 ## CMake Options
