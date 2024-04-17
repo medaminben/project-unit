@@ -1,16 +1,15 @@
 # The project name is used internally by CMake, but is not relevant for
-# for anything else. To avoid confusion, it should however match with the
+# anything else. To avoid confusion, it should however match with the
 # directory name. Camel case is okay.
 project(Core)
 
-# Clients of this library should use this name, it contains a double colon
-# which tells CMake it's a target and allows for more specific error messages.
-set(LIBRARY_NAME "${CMAKE_ROOT_NAME}::${PROJECT_NAME}")
-# The internal, raw name is generated from LIBRARY_NAME
-get_raw_target_name(${LIBRARY_NAME} LIBRARY_NAME_RAW)
+set(TARGET_NAME ${PROJECT_NAME})
 
-# Manage executable files
-set(PROJECT_HEADERS
+set(TST_DISCOVER ON)
+###############################################################
+# Manage project files
+###############################################################
+set(TARGET_HEADERS
     # private headers belong to "src"
     src/Core_impl.h
     # Public headers belong in: include/CMAKE_ROOT_NAME/...
@@ -21,53 +20,48 @@ set(PROJECT_HEADERS
     include/Sector/Core/Sector_export.h
 )
 
-set(PROJECT_SOURCES
+set(TARGET_SOURCES
     # Source files belong in "src", 
     # they will never been seen or used by other components, 
     src/Core.cpp
     src/Core_impl.cpp
 )
 
-set(PROJECT_RSC
+set(TARGET_RSC
     # resources 
+    test/data/PreprocessorTestData.txt
 )
 
-set(PROJECT_TST
+##dependencies
+#private dependencies
+set(PRIVATE_DEPS
+)
+#public dependencies
+set(PUBLIC_DEPS
+)
+set(TARGET_FILES ${TARGET_HEADERS} ${TARGET_SOURCES})
+###############################################################
+# Manage testing files
+###############################################################
+set(TST_SOURCES
+    # C++ files containing test cases should start with test_ 
+    # to identify them more easily.
+    test/src/test_Core.cpp
 )
 
-set(PROJECT_FILES 
-    ${PROJECT_HEADERS} 
-    ${PROJECT_SOURCES} 
-    ${PROJECT_RSC}
+# Test dependencies other than the actual library
+set(TEST_DEPS 
 )
-
-add_definitions(-DMAKE_SECTOR)
-add_library(${LIBRARY_NAME_RAW} 
-            ${PROJECT_FILES}
-)
-#create a dummy library aliasing the raw name
-add_library(${LIBRARY_NAME} 
-            ALIAS 
-            ${LIBRARY_NAME_RAW}
-)
- 
-# This is used in build with MSVC an export flag must be set  
-if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    target_compile_definitions(${LIBRARY_NAME_RAW} 
-        PRIVATE 
-        COMPILER_ID=1 #needed for export
-    )
-endif()
-
-target_include_directories(${LIBRARY_NAME_RAW}
-    PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/>
-        $<INSTALL_INTERFACE:include/>
-)
-
-target_link_libraries(${LIBRARY_NAME_RAW}
-    PRIVATE
-        # private dependencies here
-    PUBLIC
-        # public dependencies here
+###############################################################
+# build
+###############################################################
+create_library(
+    LIB_NAME             ${TARGET_NAME}  
+    LIB_FILES            ${TARGET_FILES}    
+    PRIVATE_DEPENDENCIES ${PRIVATE_DEPS} 
+    PUBLIC_DEPENDENCIES  ${PUBLIC_DEPS}
+    TEST_DISCOVER        ${TST_DISCOVER}
+    TEST_SOURCES         ${TST_SOURCES}    
+    TEST_DEPENDENCIES    ${TEST_DEPS}    
+    LIB_RSC              ${TARGET_RSC}
 )

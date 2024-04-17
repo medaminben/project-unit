@@ -1,17 +1,16 @@
 # common utilities for CMake,
 # Include this file as early as possible 
-#in the top CMakeLists.txt
+# in the top CMakeLists.txt
 
-# Use C++ 17 for nested namespaces 
-#and other new features 
-set(CMAKE_CXX_STANDARD 17)
+# Use C++ 17 at least for nested  
+# namespaces and other new features 
+set(CMAKE_CXX_STANDARD 20)
 # some custom functions and macros
 include(BuildUtils)
 include(DebugUtils)
 
 # Standard settings for build location:
 include(BuildLocation)
-
 
 if(BUILD_VERBOSE_OUTPUT)
     set(CMAKE_VERBOSE_MAKEFILE ON)
@@ -28,4 +27,10 @@ if(CMAKE_COMPILER_IS_GNUCXX
     set(CMAKE_CXX_FLAGS 
     "${CMAKE_CXX_FLAGS} -Wall -Werror"
     )
+endif()
+if(BUILD_TESTING)
+    print(BUILD_TESTING)
+    include(CTest)
+    enable_testing()
+    include(TestUtils)
 endif()

@@ -1,12 +1,12 @@
 
-# Find architecture property
-macro(get_arch)
+# Get architecture 
+macro(get_project_arch)
     if(CMAKE_SIZEOF_VOID_P EQUAL 8)
         set(PROJECT_ARCH_TARGET "amd64")    # x64
     elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)     
         set(PROJECT_ARCH_TARGET "i386")     # x86
     else()
-        message(FATAL_ERROR "Unkwnown architecture, CMake will exit.")
+        message(WARNING "Unkwnown architecture!")
     endif()
 endmacro()
 
@@ -20,3 +20,117 @@ macro(get_raw_target_name raw_target_name var_name)
     string(REPLACE "::" "_" ${var_name} ${raw_target_name})
     string(TOLOWER ${${var_name}} ${var_name})
 endmacro()
+
+
+function(create_library)
+# LIB_NAME              ${TARGET_NAME}  LIB_FILES           ${TARGET_FILES}    
+# PRIVATE_DEPENDENCIES  ${PRIVATE_DEPS} PUBLIC_DEPENDENCIES ${PUBLIC_DEPS}
+# TEST_DISCOVER         ${TST_DISCOVER} TEST_SOURCES        ${TST_SOURCES}    
+# TEST_DEPENDENCIES     ${TEST_DEPS}    LIB_RSC             ${TARGET_RSC}
+set(options)
+set(single_value_args LIB_NAME TEST_DISCOVER)
+set(list_args LIB_FILES PRIVATE_DEPENDENCIES PUBLIC_DEPENDENCIES 
+              TEST_SOURCES TEST_DEPENDENCIES LIB_RSC)
+
+cmake_parse_arguments( 
+    PARSE_ARGV 0
+    parameter 
+    "${options}" 
+    "${single_value_args}"  
+    "${list_args}"
+)
+
+foreach(arg IN LISTS parameter_UNPARSED_ARGUMENTS)
+    message(" >>>>>> unparsed argumemnt: ${arg}")
+endforeach()
+
+if(DEFINED CMAKE_ROOT_NAME 
+   AND NOT CMAKE_ROOT_NAME STREQUAL "")
+    # Clients of this library should use this name, it contains a double colon
+    # which tells CMake it's a target and allows for more specific error messages.
+    set(LIBRARY_NAME  ${CMAKE_ROOT_NAME}::${parameter_LIB_NAME})
+    # The internal, raw name is generated from LIBRARY_NAME
+    get_raw_target_name(${LIBRARY_NAME} LIBRARY_NAME_RAW )
+else()
+    set(LIBRARY_NAME  ${parameter_LIB_NAME})
+    # The internal, raw name is generated from LIBRARY_NAME
+    set(LIBRARY_NAME_RAW ${LIBRARY_NAME})
+endif()
+
+
+###############################################################
+# now add library 
+###############################################################
+add_library(${LIBRARY_NAME_RAW} ${parameter_LIB_FILES})
+
+# create a dummy library aliasing the raw name
+add_library(${LIBRARY_NAME} ALIAS ${LIBRARY_NAME_RAW})
+
+###############################################################
+# Manage compiler Flags
+###############################################################
+string(TOUPPER ${CMAKE_ROOT_NAME} LIB_FLAG)
+# This is used in build with MSVC an export flag must be set  
+if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    set(compiler_id 1)
+else()
+    set(compiler_id 0)
+endif()
+target_compile_definitions(${LIBRARY_NAME_RAW} 
+        PRIVATE 
+        COMPILER_ID=1 # needed for export
+        MAKE_${LIB_FLAG}
+    )
+
+###############################################################
+# linking
+###############################################################
+target_include_directories(${LIBRARY_NAME_RAW}
+    PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/>
+        $<INSTALL_INTERFACE:include/>
+)
+target_link_libraries(${LIBRARY_NAME_RAW}
+    PRIVATE
+        # private dependencies here
+        ${parameter_PRIVATE_DEPENDENCIES}
+    PUBLIC
+        # public dependencies here
+        ${parameter_PUBLIC_DEPENDENCIES}
+)
+
+###############################################################
+# Testing
+###############################################################
+if(BUILD_TESTING)
+    # Test executable names must start with "test_" 
+    # and be lowercase
+    set(TEST_NAME "test_${LIBRARY_NAME_RAW}")
+    set(GTEST_DEPENDENCIES gtest gmock_main gmock)
+    # usage: 
+    # include("TestUtils")
+    # add_gtest_executable(test_library_name
+    #     SRC
+    #         test_file1.cpp
+    #         test_file2.cpp
+    #     DEPENDS
+    #         Some::Libs
+    #     DISCOVER
+    #         [ON/OFF]
+    # )
+    build_gtest_executable(
+       ${TEST_NAME} 
+        SRC
+        # C++ files containing test cases should start 
+        # with test_ to identify them more easily.
+            ${parameter_TEST_SOURCES}
+        DEPENDS
+            ${parameter_TEST_DEPENDENCIES} 
+            ${GTEST_DEPENDENCIES}
+            ${LIBRARY_NAME}
+        DISCOVER
+            ${parameter_TEST_DISCOVER}
+    )
+endif()
+
+endfunction()

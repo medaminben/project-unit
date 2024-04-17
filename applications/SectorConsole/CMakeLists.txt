@@ -1,20 +1,28 @@
-project(SectorConsol)
+project(SectorConsole)
 
 # Don't use PROJECT_NAME as target name, 
 # using a proper executable name gives 
 # more freedom 
-set(EXECUTABLE_NAME SectorConsol)
+set(EXECUTABLE_NAME SectorConsole)
 
-#define The WIN32 Flag (needed for ui on windows) 
+# will be used to check building it or not
+# will be needed in case of missing 3rdparty 
+# dependencies to reject the build (example of 
+# usage: an app depends on boost and boost is 
+# not available also better to discard building here)
+set(BUILD_THIS_EXEC ON)
+
+# define The WIN32 Flag (needed for ui on windows) 
 set(IS_UI OFF)
 
 # Manage executable files
 # header files
 set(PROJECT_HEADERS
 )
+
 # source files
 set(PROJECT_SOURCES
-    SectorConsol.cpp
+    SectorConsole.cpp
 )
 
 # forme files
@@ -38,7 +46,7 @@ set(PROJECT_DEPS
     ${CMAKE_ROOT_NAME}::Core
 )
 
-
+# bundle all together
 set(PROJECT_FILES 
     ${PROJECT_HEADERS} 
     ${PROJECT_SOURCES} 
@@ -62,18 +70,20 @@ if(UNIX AND NOT APPLE)
     set(PROJECT_BUILD_ARGS "")
 endif()
 
-# Add files to the application
-add_executable(
-    ${EXECUTABLE_NAME}       
-    ${PROJECT_BUILD_ARGS}                   
-    ${PROJECT_FILES}
-)
-
-if(PROJECT_DEPS 
-    AND NOT PROJECT_DEPS STREQUAL "")
-        target_link_libraries(${EXECUTABLE_NAME} 
+if(BUILD_THIS_EXEC)
+    # build the executable
+    add_executable( 
+        ${EXECUTABLE_NAME}       
+        ${PROJECT_BUILD_ARGS}                   
+        ${PROJECT_FILES}
+    )
+    # link the executable
+    if(PROJECT_DEPS AND NOT PROJECT_DEPS STREQUAL "")
+        target_link_libraries( 
+            ${EXECUTABLE_NAME} 
             ${PROJECT_DEPS}
         )
- else()
-    message(" >>> ${EXECUTABLE_NAME} has no dependencies")
+    else()
+        message(" >>> ${EXECUTABLE_NAME} has no dependencies")
+    endif()
 endif()

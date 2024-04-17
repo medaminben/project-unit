@@ -1,1 +1,1 @@
-add_subdirectory(SectorConsol)
+add_subdirectory(SectorConsole)
