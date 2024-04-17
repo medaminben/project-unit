@@ -1,9 +1,9 @@
-project(SectorConsole)
+project(SectorConsole VERSION 1.0.1 LANGUAGES CXX)
 
 # Don't use PROJECT_NAME as target name, 
 # using a proper executable name gives 
 # more freedom 
-set(EXECUTABLE_NAME SectorConsole)
+set(EXECUTABLE_NAME ${PROJECT_NAME})
 
 # will be used to check building it or not
 # will be needed in case of missing 3rdparty 
@@ -78,11 +78,9 @@ if(BUILD_THIS_EXEC)
         ${PROJECT_FILES}
     )
     # link the executable
-    if(PROJECT_DEPS AND NOT PROJECT_DEPS STREQUAL "")
-        target_link_libraries( 
-            ${EXECUTABLE_NAME} 
-            ${PROJECT_DEPS}
-        )
+    if(PROJECT_DEPS AND 
+        NOT PROJECT_DEPS STREQUAL "")
+            target_link_libraries(${EXECUTABLE_NAME} ${PROJECT_DEPS})
     else()
         message(" >>> ${EXECUTABLE_NAME} has no dependencies")
     endif()

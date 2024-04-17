@@ -1,5 +1,5 @@
 
-include(FetchGTest)
+include(GTestSupport)
 # build_gtest_executable
 # Thin layer above standard CMake standard support providing utility
 # functions.

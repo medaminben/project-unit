@@ -17,7 +17,8 @@ The default setting uses std 20, but you can change it in `cmake/common.cmake`.
 - (Optional) [Ninja](https://ninja-build.org/) can greatly improve the incremental build time.
 
 ### 3rdParty
-- [googletest](https://github.com/google/googletest.git) 
+- [googletest](https://github.com/google/googletest.git)
+- [QT Framework](https://www.qt.io/) no automated installation, you have to accept the license first and install it by yoursel and, then set the path for QT6_DIR in BuildLocation.cmake to the right location to let cmake finding it.
 
 ## Usage
 Before starting your project, modify all project names in the CMake files into your needs. And be careful of the folder and file names 
@@ -30,10 +31,11 @@ You need to modify those names in both the CMake files and the project structure
 - For sure the shortness of the different scripts gives an ease in the build management, but the complexity of folder/files structure is a little bit confusing especially by browsing
 
 ## CMake Options
-- BUILD_SHARED_LIBS     Build project libraries as shared libraries  
-- BUILD_VERBOSE_OUTPUT  Build with verbose output  
-- BUILD_TESTING         Build tests
-- BUILD_APPS            Build applications
+- BUILD_SHARED_LIBS ____ Build project libraries as shared libraries  
+- BUILD_VERBOSE_OUTPUT _ Build with verbose output  
+- BUILD_TESTING ________ Build tests
+- BUILD_APPS ___________ Build applications
+- BUILD_QT_UI __________ Build Qt based applications
 
 ## License
 This repository is released under Public Domain, use it in whatever way you want. See the License file for more information.

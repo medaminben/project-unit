@@ -1,1 +1,2 @@
 add_subdirectory(SectorConsole)
+add_subdirectory(SectorQt_UI)

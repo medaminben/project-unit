@@ -7,3 +7,6 @@ if(UNIX)
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BUILD_OUTPUT}/lib)  
 endif()
 
+# 3rd party location
+### Qt framework
+set(QT6_DIR "C:/Qt/6.7.0/mingw_64/lib/cmake")
