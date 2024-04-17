@@ -1,7 +1,7 @@
 # The project name is used internally by CMake, but is not relevant for
 # anything else. To avoid confusion, it should however match with the
 # directory name. Camel case is okay.
-project(Core)
+project(Core VERSION 1.1.0 LANGUAGES CXX)
 
 set(TARGET_NAME ${PROJECT_NAME})
 
