@@ -50,7 +50,7 @@ set(TST_SOURCES
 )
 
 # Test dependencies other than the actual library
-set(TEST_DEPS 
+set(TEST_DEPS
 )
 ###############################################################
 # build

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.29)
 
 # Project names are only relevant for humans, camel case is Oay
-project(Sector VERSION 1.0.1)
+project(Sector VERSION 1.1.1)
 # globalization of the root project name
 set(CMAKE_ROOT_NAME ${PROJECT_NAME})
 
