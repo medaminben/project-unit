@@ -8,8 +8,8 @@ Following this strategy, the development is better organized, productive and agi
 
 ## External dependencies
 ### A C++ compiler
-Recent version of [Visual Studio](https://www.visualstudio.com/), and [GCC](https://gcc.gnu.org/) should be found.
-The default setting uses std 20, but you can change it in [cmake/common.cmake](https://github.com/medaminben/project-unit/blob/main/cmake/Common.cmake).
+Recent version of [Visual Studio](https://www.visualstudio.com/), and [GCC](https://gcc.gnu.org/) should be fine.
+The default setting uses std 20, but you can change it in [common.cmake](https://github.com/medaminben/project-unit/blob/main/cmake/Common.cmake).
 ### CMake 3.29
 - CMake is the build tool used for this project.
 
