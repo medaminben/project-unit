@@ -1,87 +1,66 @@
-project(SectorConsole VERSION 1.0.1 LANGUAGES CXX)
-
+project(SectorConsole VERSION 1.1.1 LANGUAGES CXX)
+set(PROJECT_LIST)
 # Don't use PROJECT_NAME as target name, 
 # using a proper executable name gives 
 # more freedom 
 set(EXECUTABLE_NAME ${PROJECT_NAME})
+add_project(${EXECUTABLE_NAME} PROJECT_LIST)
 
-# will be used to check building it or not
-# will be needed in case of missing 3rdparty 
-# dependencies to reject the build (example of 
-# usage: an app depends on boost and boost is 
-# not available also better to discard building here)
-set(BUILD_THIS_EXEC ON)
+set(BUILD_${EXECUTABLE_NAME} ${BUILD_APPS})
+# executable type 
+set(${EXECUTABLE_NAME}_ENTRY "Console")
 
-# define The WIN32 Flag (needed for ui on windows) 
-set(IS_UI OFF)
-
-# Manage executable files
 # header files
-set(PROJECT_HEADERS
+set(${EXECUTABLE_NAME}_HEADERS
 )
 
 # source files
-set(PROJECT_SOURCES
+set(${EXECUTABLE_NAME}_SOURCES
     SectorConsole.cpp
 )
 
 # forme files
-set(PROJECT_UI
+set(${EXECUTABLE_NAME}_UI
 )
 
 # ressources
-set(PROJECT_RSC
+set(${EXECUTABLE_NAME}_RSC
 )
-
-# Use a library name as a dependency. 
-# The "::" in the name forces CMake to look
-# for a target instead of looking for bare 
-# library files on the filesystem, which can 
-# avoid some errors.
-# Since CMake knows the include paths and 
-# the libraries produced by the target, 
-# it will add them automatically to the 
-# compiler and linker command lines.
-set(PROJECT_DEPS 
+# dependencies
+set(${EXECUTABLE_NAME}_DEPS 
     ${CMAKE_ROOT_NAME}::Core
 )
-
-# bundle all together
-set(PROJECT_FILES 
-    ${PROJECT_HEADERS} 
-    ${PROJECT_SOURCES} 
-    ${PROJECT_UI} 
-    ${PROJECT_RSC}
+# compile arguments
+set(${EXECUTABLE_NAME}_BUILD_ARGS 
 )
 
-# Platform dependant stuff
-# Windows (for both x86/x64)
-if(WIN32 AND IS_UI)
-    set(PROJECT_BUILD_ARGS WIN32)
-else()
-    set(PROJECT_BUILD_ARGS "")
-endif()
-# MacOS (for both x86/x64)
-if(UNIX AND APPLE)   
-    set(PROJECT_BUILD_ARGS "")
-endif()
-# Linux, BSD, Solaris, Minix (for both x86/x64)
-if(UNIX AND NOT APPLE)   
-    set(PROJECT_BUILD_ARGS "")
-endif()
+#################################################
+# Build all the projects
+#################################################
 
-if(BUILD_THIS_EXEC)
-    # build the executable
-    add_executable( 
-        ${EXECUTABLE_NAME}       
-        ${PROJECT_BUILD_ARGS}                   
-        ${PROJECT_FILES}
-    )
-    # link the executable
-    if(PROJECT_DEPS AND 
-        NOT PROJECT_DEPS STREQUAL "")
-            target_link_libraries(${EXECUTABLE_NAME} ${PROJECT_DEPS})
-    else()
-        message(" >>> ${EXECUTABLE_NAME} has no dependencies")
+foreach(item IN LISTS PROJECT_LIST)
+
+    if(BUILD_${item})
+        # create_application(
+        #     NAME  "PROJECT_x_NAME"
+        #     ENTRY ["Console" "QT_ui" "WX_ui" "Service"]
+        #     HEADERS "<header.h ...>""
+        #     SOURCES ">source.cpp ...>"
+        #     RESOURCES "<file.txt ...>"
+        #     UI "form.ui"     
+        #     BUILD_ARGS "<WIN32 ...>"
+        #     DEPENDENCIES "internal::dependencies" "third_party::dependencies"
+        # )
+        create_application(
+            NAME         ${item}
+            ENTRY        ${${item}_ENTRY}
+            HEADERS      ${${item}_HEADERS} 
+            SOURCES      ${${item}_SOURCES} 
+            RESOURCES    ${${item}_RSC}
+            UI           ${${item}_UI}     
+            BUILD_ARGS   ${${item}_BUILD_ARGS}
+            DEPENDENCIES ${${item}_DEPS}       
+        )
     endif()
-endif()
+
+endforeach()

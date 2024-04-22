@@ -43,6 +43,7 @@ endif()
 if(BUILD_QT_UI)
     include(QtSupport)
 endif()
+
 if(BUILD_VERBOSE_OUTPUT)
     dump_cmake_vars(configLogEnd.log)
 endif()
