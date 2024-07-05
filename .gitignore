@@ -102,3 +102,5 @@ luac.out
 
 #export 
 *_export.h
+#envirement variables paths, system specific
+cmake/configs/env_vars.ini
