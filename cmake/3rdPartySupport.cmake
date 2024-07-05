@@ -135,7 +135,6 @@ function(import_3rd_party_properties)
                                         POSTFIX   ${postfix}
                     )
                     get_Variables(var_list ${postfix})
-                    message( "${var_list}")
                     # make available to caller
                     foreach(key ${var_list})
                         set(${key} ${${key}} PARENT_SCOPE)
