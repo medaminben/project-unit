@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD 20)
 
 # some custom functions and macros
 include(BuildUtils)
-
+include(libraryGenerator)  
 # Standard settings for build and import locations:
 include(BuildLocation)
 
