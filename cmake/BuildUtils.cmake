@@ -129,7 +129,7 @@ function(create_library)
         set(GTEST_DEPENDENCIES gtest gmock_main gmock)
         # usage: 
         # include("TestUtils")
-        # add_gtest_executable(test_library_name
+        # add_gtest_executable(NAME test_library_name
         #     SRC
         #         test_file1.cpp
         #         test_file2.cpp
@@ -138,8 +138,7 @@ function(create_library)
         #     DISCOVER
         #         [ON/OFF]
         # )
-        build_gtest_executable(
-        ${TEST_NAME} 
+        build_gtest_executable(NAME ${TEST_NAME} 
             SRC
             # C++ files containing test cases should start 
             # with test_ to identify them more easily.

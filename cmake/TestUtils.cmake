@@ -7,29 +7,45 @@ include(GTestSupport)
 # Use DISCOVER if you want CMake to discover the tests in the
 # executable automatically with gtest_discover_tests()
 #
+# add_gtest_executable(NAME test_library_name
+#     SRC
+#         test_file1.cpp
+#         test_file2.cpp
+#     DEPENDS
+#         Some::Libs
+#     DISCOVER
+#         [ON/OFF]
+# )
+
 function(build_gtest_executable)
-    cmake_parse_arguments(PARGS "DISCOVER" "" "SRC;DEPENDS" ${ARGN})
-
-    set(TEST_EXECUTABLE_NAME ${ARGV0})
-
-    if(NOT "${TEST_EXECUTABLE_NAME}" MATCHES "test_.*")
-        message(FATAL_ERROR "> ${TEST_EXECUTABLE_NAME} : for management restriction the executable name should start with test_")
+    #parsing arguments
+    set(options)
+    set(single_value_args NAME DISCOVER)
+    set(list_args SRC DEPENDS)
+    cmake_parse_arguments( PARSE_ARGV 0 test "${options}" "${single_value_args}" "${list_args}")
+    foreach(arg IN LISTS lib_UNPARSED_ARGUMENTS)
+        message(" >>>>>> unparsed argumemnt: ${arg}")
+    endforeach()
+    ############################################################
+    # call guard
+    if(NOT "${test_NAME}" MATCHES "test_.*")
+        message(FATAL_ERROR "> ${test_NAME} : for management restriction the executable name should start with test_")
     endif()
 
-    if("${TEST_EXECUTABLE_NAME}" MATCHES ".*[A-Z].*")
-        message(FATAL_ERROR "> ${TEST_EXECUTABLE_NAME}: for management restriction the executable name should start name be lowercase")
+    if("${test_NAME}" MATCHES ".*[A-Z].*")
+        message(FATAL_ERROR "> ${test_NAME}: for management restriction the executable name should start name be lowercase")
     endif()
 
-    if ("${PARGS_SRC}" STREQUAL "")
-        message(FATAL_ERROR "> ${TEST_EXECUTABLE_NAME}: missing source files for test executable")
+    if ("${test_SRC}" STREQUAL "")
+        message(FATAL_ERROR "> ${test_NAME}: missing source files for test executable")
     endif()
+    ############################################################
+    # build test
+    add_executable(${test_NAME} ${test_SRC})
+    target_link_libraries(${test_NAME} PUBLIC ${test_DEPENDS})    
  
-    add_executable(${TEST_EXECUTABLE_NAME} ${PARGS_SRC})
-    
-    target_link_libraries(${TEST_EXECUTABLE_NAME} PUBLIC ${PARGS_DEPENDS})    
- 
-    if(${PARGS_DISCOVER})
-        gtest_discover_tests(${TEST_EXECUTABLE_NAME})
+    if(${test_DISCOVER})
+        gtest_discover_tests(${test_NAME})
     endif()
 
 endfunction()

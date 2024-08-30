@@ -4,34 +4,35 @@
 #                     KEYS      "specefic" "value_keys" "if_no_given_will_parse_all"
 # )
 function(read_from_ini_file)
-    # parse function arguments
+    #parsing arguments
     set(options)
     set(single_value_args CONF_NAME POSTFIX)
     set(list_args KEYS)
-    cmake_parse_arguments(PARSE_ARGV 0 ini 
-        "${options}" 
-        "${single_value_args}" 
-        "${list_args}"
-    )
+    cmake_parse_arguments(PARSE_ARGV 0 ini "${options}" "${single_value_args}" "${list_args}" )
+
     foreach(arg IN LISTS ini_UNPARSED_ARGUMENTS)
         prompt("unparsed argumemnt: ${arg}")
     endforeach()
-
+    ############################################################
+    # call guard
     if(NOT DEFINED ini_CONF_NAME)
         prompt("config file name not defined")
         return()
     endif()
 
-    prompt("call of ini parser")
+    
     if(NOT DEFINED ini_POSTFIX)
         prompt("special postfix for ini file is missing so it will be set to default \"INI_VALUE\"")
         set(postfix "INI_VALUE")
     else()
         set(postfix ${ini_POSTFIX})
     endif()
+    ############################################################
+    # parse ini file 
+    prompt("call of ini parser")
 
     file(READ ${ini_CONF_NAME} config_file_text_stream)
-    #message("${ini_CONF_NAME} : ${config_file_text_stream}")
+    # message("${ini_CONF_NAME} : ${config_file_text_stream}")
     # Turn the contents into a list of strings, each ending with a ";".
     string(REPLACE "\n" ";" config_file_lines "${config_file_text_stream}")
 
@@ -70,7 +71,7 @@ endfunction()
 # This import the 3rd party properties such external library directories
 # it s useful for huge external dependencies such as wxWidgets OpenCV and others
 function(import_3rd_party_properties)
-    # parse function arguments
+    #parsing arguments
     set(options)
     set(single_value_args CONF_NAME CONF_DIR POSTFIX)
     set(list_args CONF_TYPES KEYS)
@@ -79,7 +80,9 @@ function(import_3rd_party_properties)
     if(DEFINED params_UNPARSED_ARGUMENTS)
         prompt("unparsed argumemnt: ${arg}")
     endif()
-    # error check 
+    ############################################################
+    # call guard
+
     # no file nname than return
     if(NOT DEFINED params_CONF_NAME)
         prompt(WARNING "reading file fails that the CONF_NAME is missing")
@@ -97,6 +100,8 @@ function(import_3rd_party_properties)
         prompt("file directory is missing, it will be set to the default: ${CMAKE_SOURCE_DIR}/cmake/configs")
         set(config_dir ${CMAKE_SOURCE_DIR}/cmake/configs)
     endif()
+    ############################################################
+    # import propertties
     
     # get all files in the config dir 
     file(GLOB_RECURSE  config_files  "${config_dir}/*")
