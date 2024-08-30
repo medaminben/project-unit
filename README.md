@@ -5,7 +5,7 @@ This repository is a CMake boilerplate for starting a C++ project.
 The architecture of the project is library based structure
 The Lib architecture gives a higher degree of freedom by splitting the producers (in this example case, the core library) and the consumer (as the console app).
 Following this strategy, the development is better organized, productive and agile.
-
+For better understanding of the different cmake skript please take a look at [Professional CMake: A Practical Guide](https://crascit.com/professional-cmake/), 
 ## External dependencies
 ### A C++ compiler
 Recent version of [Visual Studio](https://www.visualstudio.com/), and [GCC](https://gcc.gnu.org/) should be fine.
