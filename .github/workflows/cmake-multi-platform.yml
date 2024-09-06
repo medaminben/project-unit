@@ -47,7 +47,17 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v4
+      with:
+        qt-version: 6.7.0 
+        platform: ${{ matrix.platform }}
+        architecture: ${{ matrix.architecture }}
+    - name: build-and-Test-with-QT
+      run: |
+          # Use environment variables to access installed Qt dependencies
+          export QT_DIR=${{ job.qt_dir }}
+          export QT_BIN_DIR=${{ job.qt_bin_dir }}
     - name: Set reusable strings
       # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
       id: strings
