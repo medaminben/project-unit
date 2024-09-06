@@ -9,7 +9,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -24,6 +24,7 @@ jobs:
       # To add more build types (Release, Debug, RelWithDebInfo, etc.) customize the build_type list.
       matrix:
         os: [ubuntu-latest, windows-latest]
+        qt-version: [6.7.0]
         build_type: [Release]
         c_compiler: [gcc, clang, cl]
         include:
@@ -53,7 +54,6 @@ jobs:
       shell: bash
       run: |
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
-
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
@@ -63,7 +63,19 @@ jobs:
         -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
         -S ${{ github.workspace }}
-
+      # https://github.com/orgs/community/discussions/26639 
+      # https://medium.com/@TomRvr/continuous-integration-for-a-qt-project-with-github-b19a33b39980
+      # https://github.com/orgs/community/discussions/26639
+    - name: Install Qt dependencies
+      run: |
+        # Ubuntu-based systems
+        sudo apt-get update && sudo apt-get install -y qt${qt-version}
+        # Windows
+        choco install qt${qt-version}
+    - name: Configure Qt environment
+      env:
+        QT_VERSION: ${qt-version}
+        QT_DIR: /path/to/qt-${qt-version}
     - name: Build
       # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
       run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
