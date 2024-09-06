@@ -1,9 +1,9 @@
 
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets Gui Core QUIET)
 find_package(Qt${QT_VERSION_MAJOR}  COMPONENTS Widgets Gui Core QUIET)
-set(qt_FOUND ${QT6_FOUND} OR ${QT5_FOUND})
-
-if( NOT qt_FOUND)
+set(qt_FOUND )
+message(>>>>>>>> qt_FOUND ${QT6_FOUND})
+if(NOT QT6_FOUND AND NOT QT5_FOUND )
 
     # Set Ninja for compilation
     set( CMAKE_GENERATOR "Ninja" CACHE STRING "CMake generator" FORCE )
@@ -51,9 +51,9 @@ if( NOT qt_FOUND)
                      WORKING_DIRECTORY ${QT_BUILD_DIR} )
     endif()
 
-    # Set necessary environment variables to use Qt
-    set( ENV{QTDIR} ${QT_BUILD_DIR} )
-    set( ENV{PATH} ${QT_BUILD_DIR}/bin:$ENV{PATH})
+    # # Set necessary environment variables to use Qt
+    # set( ENV{QTDIR} ${QT_BUILD_DIR} )
+    # set( ENV{PATH} ${QT_BUILD_DIR}/bin:$ENV{PATH})
 
 else()
     message( STATUS "Qt 6.7.0 found in the system." )
